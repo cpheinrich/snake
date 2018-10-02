@@ -29,7 +29,7 @@ class DQNetwork:
         self.model = Sequential()
 
         # First convolutional layer
-        self.model.add(Conv2D(32, 8, strides=(4, 4),
+        self.model.add(Conv2D(32, 8, strides=(2, 2),
                               padding='valid',
                               activation='relu',
                               input_shape=input_shape,
@@ -37,13 +37,6 @@ class DQNetwork:
 
         # Second convolutional layer
         self.model.add(Conv2D(64, 4, strides=(2, 2),
-                              padding='valid',
-                              activation='relu',
-                              input_shape=input_shape,
-                              data_format='channels_first'))
-
-        # Third convolutional layer
-        self.model.add(Conv2D(64, 3, strides=(1, 1),
                               padding='valid',
                               activation='relu',
                               input_shape=input_shape,
@@ -63,7 +56,7 @@ class DQNetwork:
             self.load(load_path)
 
         self.model.compile(loss='mean_squared_error',
-                           optimizer='rmsprop',
+                           optimizer='Adam',
                            metrics=['accuracy'])
 
     def train(self, batch, DQN_target):

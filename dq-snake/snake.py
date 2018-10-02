@@ -48,10 +48,10 @@ parser.add_argument('--avg-val-computation-freq', type=int, default=50e3,
                          'average reward and Q value are computed')
 parser.add_argument('--discount-factor', type=float, default=0.99,
                     help='discount factor for the environment')
-parser.add_argument('--update-freq', type=int, default=1,
+parser.add_argument('--update-freq', type=int, default=4,
                     help='frequency (number of steps) with which to train the '
                          'DQN')
-parser.add_argument('--learning-rate', type=float, default=0.00025,
+parser.add_argument('--learning-rate', type=float, default=0.001,
                     help='learning rate for optimizer')
 parser.add_argument('--epsilon', type=float, default=1,
                     help='initial exploration rate for the agent')
@@ -59,7 +59,7 @@ parser.add_argument('--min-epsilon', type=float, default=0.1,
                     help='final exploration rate for the agent')
 parser.add_argument('--epsilon-decrease', type=float, default=9e-7,
                     help='rate at which to linearly decrease epsilon')
-parser.add_argument('--replay-start-size', type=int, default=50e3,
+parser.add_argument('--replay-start-size', type=int, default=1e3,
                     help='minimum number of transitions (with fully random '
                          'policy) to store in the replay memory before '
                          'starting training')
@@ -106,8 +106,9 @@ test_states = []
 
 
 env = gym.make(args.environment)
-env.grid_size = [24,24]
-env.unit_size = 2
+env.grid_size = [16,16]
+env.unit_size = 1
+env.unit_gap = 0
 env.n_snakes = args.n_snakes
 env.n_foods = args.n_foods
 
@@ -115,7 +116,7 @@ IMG_SIZE = (env.grid_size[0]*env.unit_size, env.grid_size[1]*env.unit_size)
 utils.IMG_SIZE = IMG_SIZE
 
 
-network_input_shape = (1, IMG_SIZE[0], IMG_SIZE[1])  # Dimension ordering: 'th' (channels first)
+network_input_shape = (4, IMG_SIZE[0], IMG_SIZE[1])  # Dimension ordering: 'th' (channels first)
 DQA = DQAgent(env.action_space.n,
               network_input_shape,
               replay_memory_size=args.replay_memory_size,
@@ -163,7 +164,7 @@ if args.train:
         obs = utils.preprocess_observation(env.reset())
 
         # Initialize the first state with the first image
-        current_state = np.array([obs])
+        current_state = np.array([obs,obs,obs,obs])
 
         # Main episode loop
         t = 0
