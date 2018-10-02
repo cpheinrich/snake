@@ -7,14 +7,14 @@ import utils
 from DQAgent import DQAgent
 from evaluation import evaluate
 from Logger import Logger
+import gym_snake
 
-
+'''
 def exit_handler():
     global DQA
     DQA.quit()
+'''
 
-IMG_SIZE = (84, 110)
-utils.IMG_SIZE = IMG_SIZE
 
 # I/O
 parser = argparse.ArgumentParser()
@@ -30,8 +30,12 @@ parser.add_argument('--eval', action='store_true',
                     help='evaluate the agent')
 parser.add_argument('-e', '--environment', type=str,
                     help='name of the OpenAI Gym environment to use '
-                         '(default: MsPacmanDeterministic-v4)',
-                    default='MsPacmanDeterministic-v4')
+                         '(default: snake-v0)',
+                    default='snake-v0')
+parser.add_argument('-n', '--n_snakes', type=int, default=1,
+                    help='Number of snakes in multi-snake setting')
+parser.add_argument('-f', '--n_foods', type=int, default=1,
+                    help='Number of foods to use')
 parser.add_argument('--minibatch-size', type=int, default=32,
                     help='number of sample to train the DQN at each update')
 parser.add_argument('--replay-memory-size', type=int, default=1e6,
@@ -44,7 +48,7 @@ parser.add_argument('--avg-val-computation-freq', type=int, default=50e3,
                          'average reward and Q value are computed')
 parser.add_argument('--discount-factor', type=float, default=0.99,
                     help='discount factor for the environment')
-parser.add_argument('--update-freq', type=int, default=4,
+parser.add_argument('--update-freq', type=int, default=1,
                     help='frequency (number of steps) with which to train the '
                          'DQN')
 parser.add_argument('--learning-rate', type=float, default=0.00025,
@@ -88,7 +92,10 @@ if args.debug:
           '####################################################')
 
 logger = Logger(debug=args.debug, append=args.environment)
-atexit.register(exit_handler)  # Make sure to always save the model when exiting
+ # Make sure to always save the model when exiting
+
+
+
 
 # Variables
 test_scores = []
@@ -96,8 +103,19 @@ test_mean_q = []
 test_states = []
 
 # Setup
+
+
 env = gym.make(args.environment)
-network_input_shape = (4, 110, 84)  # Dimension ordering: 'th' (channels first)
+env.grid_size = [24,24]
+env.unit_size = 2
+env.n_snakes = args.n_snakes
+env.n_foods = args.n_foods
+
+IMG_SIZE = (env.grid_size[0]*env.unit_size, env.grid_size[1]*env.unit_size)
+utils.IMG_SIZE = IMG_SIZE
+
+
+network_input_shape = (1, IMG_SIZE[0], IMG_SIZE[1])  # Dimension ordering: 'th' (channels first)
 DQA = DQAgent(env.action_space.n,
               network_input_shape,
               replay_memory_size=args.replay_memory_size,
@@ -111,10 +129,16 @@ DQA = DQAgent(env.action_space.n,
               load_path=args.load,
               logger=logger)
 
+def exit_handler():
+    global DQA
+    DQA.quit()
+
+atexit.register(exit_handler)
+
 # Initial logging
 logger.log({
     'Action space': env.action_space.n,
-    'Observation space': env.observation_space.shape
+    #'Observation space': env.observation_space.shape
 })
 logger.log(vars(args))
 training_csv = 'training_info.csv'
@@ -138,8 +162,8 @@ if args.train:
         # Observe reward and initialize first state
         obs = utils.preprocess_observation(env.reset())
 
-        # Initialize the first state with the same 4 images
-        current_state = np.array([obs, obs, obs, obs])
+        # Initialize the first state with the first image
+        current_state = np.array([obs])
 
         # Main episode loop
         t = 0
@@ -216,6 +240,7 @@ if args.train:
                 test_scores.append(score)
                 test_q_values = [DQA.get_max_q(state) for state in test_states]
                 test_mean_q.append(np.mean(test_q_values))
+
         episode += 1
 
 if args.eval:

@@ -16,6 +16,9 @@ for i in range(100):
         for i in range(env.n_snakes):
             actions.append(env.action_space.sample())
         observation, reward, done, info = env.step(actions)
+        print("Observation shape: ",observation.shape)
+        print("Size of action space", env.action_space.n)
+        print("Reward is:",reward)
         if done:
             print('episode {} finished after {} timesteps'.format(i, t))
             break
