@@ -57,9 +57,9 @@ parser.add_argument('--epsilon', type=float, default=1,
                     help='initial exploration rate for the agent')
 parser.add_argument('--min-epsilon', type=float, default=0.1,
                     help='final exploration rate for the agent')
-parser.add_argument('--epsilon-decrease', type=float, default=1e-4,
+parser.add_argument('--epsilon-decrease', type=float, default=5e-5,
                     help='rate at which to linearly decrease epsilon')
-parser.add_argument('--replay-start-size', type=int, default=1e3,
+parser.add_argument('--replay-start-size', type=int, default=1e4,
                     help='minimum number of transitions (with fully random '
                          'policy) to store in the replay memory before '
                          'starting training')
