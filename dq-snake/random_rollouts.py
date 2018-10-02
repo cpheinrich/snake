@@ -15,6 +15,9 @@ for i in range(100):
         actions = []
         for i in range(env.n_snakes):
             actions.append(env.action_space.sample())
+        print('Actions:',actions)
+        print('Action type', type(actions[0]))
+
         observation, reward, done, info = env.step(actions)
         print("Observation shape: ",observation.shape)
         print("Size of action space", env.action_space.n)

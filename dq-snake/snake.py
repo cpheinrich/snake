@@ -57,7 +57,7 @@ parser.add_argument('--epsilon', type=float, default=1,
                     help='initial exploration rate for the agent')
 parser.add_argument('--min-epsilon', type=float, default=0.1,
                     help='final exploration rate for the agent')
-parser.add_argument('--epsilon-decrease', type=float, default=9e-7,
+parser.add_argument('--epsilon-decrease', type=float, default=1e-4,
                     help='rate at which to linearly decrease epsilon')
 parser.add_argument('--replay-start-size', type=int, default=1e3,
                     help='minimum number of transitions (with fully random '
@@ -180,6 +180,9 @@ if args.train:
 
             # Select an action using the DQA
             action = DQA.get_action(np.asarray([current_state]))
+            action = int(action)
+            #print('Action:',action)
+            #print("Action type:",type(action))
 
             # Observe reward and next state
             obs, reward, done, info = env.step(action)
