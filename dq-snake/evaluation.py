@@ -35,6 +35,7 @@ def evaluate(DQA, args, logger):
             action = DQA.get_action(np.asarray([current_state]),
                                     testing=True,
                                     force_random=remaining_random_actions > 0)
+            action = int(action)
             obs, reward, done, info = env.step(action)
             obs = utils.preprocess_observation(obs)
             current_state = utils.get_next_state(current_state, obs)
@@ -49,13 +50,13 @@ def evaluate(DQA, args, logger):
             # End episode
             if done or t > args.max_episode_length:
                 episode += 1
-                print('Episode %d end\n---------------\nFrame counter: %d\n' % 
+                print('Episode %d end\n---------------\nFrame counter: %d\n' %
                       (episode, frame_counter))
                 print('Length: %d\n, Score: %f\n\n' % (t, score))
                 # Save episode data in the evaluation csv
                 logger.to_csv(evaluation_csv, [t, score])
                 break
-                
+
         scores.append([t, score])
 
     scores = np.asarray(scores)

@@ -1,4 +1,5 @@
 import numpy as np
+import keras
 from keras.models import Sequential
 from keras.layers import Conv2D, Flatten, Dense
 
@@ -93,10 +94,15 @@ class DQNetwork:
         x_train = np.asarray(x_train).squeeze()
         t_train = np.asarray(t_train).squeeze()
 
+        # Add Callbacks
+        callbacks = []
+        #tb = keras.callbacks.TensorBoard()
+        #callbacks.append(tb)
         # Train the model for one epoch
         h = self.model.fit(x_train,
                            t_train,
                            batch_size=self.minibatch_size,
+                           callbacks = callbacks,
                            nb_epoch=1)
 
         # Log loss and accuracy

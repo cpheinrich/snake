@@ -51,7 +51,7 @@ parser.add_argument('--discount-factor', type=float, default=0.99,
 parser.add_argument('--update-freq', type=int, default=4,
                     help='frequency (number of steps) with which to train the '
                          'DQN')
-parser.add_argument('--learning-rate', type=float, default=0.001,
+parser.add_argument('--learning-rate', type=float, default=0.005,
                     help='learning rate for optimizer')
 parser.add_argument('--epsilon', type=float, default=1,
                     help='initial exploration rate for the agent')
@@ -63,7 +63,7 @@ parser.add_argument('--replay-start-size', type=int, default=1e4,
                     help='minimum number of transitions (with fully random '
                          'policy) to store in the replay memory before '
                          'starting training')
-parser.add_argument('--initial-random-actions', type=int, default=30,
+parser.add_argument('--initial-random-actions', type=int, default=5,
                     help='number of random actions to be performed by the agent'
                          ' at the beginning of each episode')
 parser.add_argument('--dropout', type=float, default=0.,
@@ -75,7 +75,7 @@ parser.add_argument('--max-episode-length', type=int, default=np.inf,
                     help='maximum number of steps in an episode')
 parser.add_argument('--max-frames-number', type=int, default=50e6,
                     help='maximum number of frames during the whole algorithm')
-parser.add_argument('--test-freq', type=int, default=250000,
+parser.add_argument('--test-freq', type=int, default=100000,
                     help='frequency (number of frames) with which to test the '
                          'agent\'s performance')
 parser.add_argument('--validation-frames', type=int, default=135000,
