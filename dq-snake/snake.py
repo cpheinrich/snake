@@ -9,12 +9,6 @@ from evaluation import evaluate
 from Logger import Logger
 import gym_snake
 
-'''
-def exit_handler():
-    global DQA
-    DQA.quit()
-'''
-
 
 # I/O
 parser = argparse.ArgumentParser()
@@ -38,7 +32,7 @@ parser.add_argument('-f', '--n_foods', type=int, default=1,
                     help='Number of foods to use')
 parser.add_argument('--minibatch-size', type=int, default=32,
                     help='number of sample to train the DQN at each update')
-parser.add_argument('--replay-memory-size', type=int, default=1e6,
+parser.add_argument('--replay-memory-size', type=int, default=1e5,
                     help='number of samples stored in the replay memory')
 parser.add_argument('--target-network-update-freq', type=int, default=10e3,
                     help='frequency (number of DQN updates) with which the '
@@ -46,24 +40,24 @@ parser.add_argument('--target-network-update-freq', type=int, default=10e3,
 parser.add_argument('--avg-val-computation-freq', type=int, default=50e3,
                     help='frequency (number of DQN updates) with which the '
                          'average reward and Q value are computed')
-parser.add_argument('--discount-factor', type=float, default=0.99,
+parser.add_argument('--discount-factor', type=float, default=0.95,
                     help='discount factor for the environment')
 parser.add_argument('--update-freq', type=int, default=4,
                     help='frequency (number of steps) with which to train the '
                          'DQN')
-parser.add_argument('--learning-rate', type=float, default=0.005,
+parser.add_argument('--learning-rate', type=float, default=0.001,
                     help='learning rate for optimizer')
-parser.add_argument('--epsilon', type=float, default=1,
+parser.add_argument('--epsilon', type=float, default=1.0,
                     help='initial exploration rate for the agent')
-parser.add_argument('--min-epsilon', type=float, default=0.1,
+parser.add_argument('--min-epsilon', type=float, default=0.05,
                     help='final exploration rate for the agent')
 parser.add_argument('--epsilon-decrease', type=float, default=5e-5,
                     help='rate at which to linearly decrease epsilon')
-parser.add_argument('--replay-start-size', type=int, default=1e4,
+parser.add_argument('--replay-start-size', type=int, default=5e3,
                     help='minimum number of transitions (with fully random '
                          'policy) to store in the replay memory before '
                          'starting training')
-parser.add_argument('--initial-random-actions', type=int, default=5,
+parser.add_argument('--initial-random-actions', type=int, default=2,
                     help='number of random actions to be performed by the agent'
                          ' at the beginning of each episode')
 parser.add_argument('--dropout', type=float, default=0.,
@@ -75,10 +69,10 @@ parser.add_argument('--max-episode-length', type=int, default=np.inf,
                     help='maximum number of steps in an episode')
 parser.add_argument('--max-frames-number', type=int, default=50e6,
                     help='maximum number of frames during the whole algorithm')
-parser.add_argument('--test-freq', type=int, default=100000,
+parser.add_argument('--test-freq', type=int, default=10000,
                     help='frequency (number of frames) with which to test the '
                          'agent\'s performance')
-parser.add_argument('--validation-frames', type=int, default=135000,
+parser.add_argument('--validation-frames', type=int, default=13500,
                     help='number of frames to test the model like in table 3 of'
                          ' the paper')
 parser.add_argument('--test-states', type=int, default=30,
@@ -181,8 +175,6 @@ if args.train:
             # Select an action using the DQA
             action = DQA.get_action(np.asarray([current_state]))
             action = int(action)
-            #print('Action:',action)
-            #print("Action type:",type(action))
 
             # Observe reward and next state
             obs, reward, done, info = env.step(action)

@@ -71,7 +71,7 @@ class DQAgent:
         :param testing: whether to use the current epsilon or the constant 0.05
         :param force_random: whether to sample a random action regardless of
             parameters
-        :return: the index of (action associated to) the highest Q-value 
+        :return: the index of (action associated to) the highest Q-value
         """
         is_random = (random() < (self.epsilon if not testing else 0.05))
         if force_random or is_random:
@@ -84,7 +84,7 @@ class DQAgent:
         """
         Returns the maximum Q value predicted on the given state.
         :param state: a state that can be passed as input to DQN
-        :return: an action index corresponding to the maximum Q-value in the 
+        :return: an action index corresponding to the maximum Q-value in the
             given state
         """
         q_values = self.DQN.predict(state)
